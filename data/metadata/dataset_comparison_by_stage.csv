@@ -1,0 +1,12 @@
+stage,cells,median_UMI,median_genes,median_pct_mt,dataset
+E10.0,32136,9357,2886,0.62,devbrain
+E7.0,11195,14703,3398,0.39,devbrain
+E8.0,6813,16336,3608,0.49,devbrain
+E8.5,3241,11144,2987,0.62,devbrain
+E9.0,14781,14590,3654,0.58,devbrain
+E7.5,9533,43850,5943,0.0,brooks
+E7.75,7101,41342,5789,0.0,brooks
+E8.0,3444,30103,4987,0.0,brooks
+E8.25,3397,46987,5982,0.0,brooks
+E8.5,10085,38719,5910,0.0,brooks
+E8.75,5903,51668,6393,0.0,brooks

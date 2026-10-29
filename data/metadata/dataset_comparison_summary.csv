@@ -1,0 +1,3 @@
+dataset,cells,median_UMI,median_genes,genes_per_10k_UMI,median_pct_mt,median_pct_ribo
+devbrain,68166,11692,3188,2741.9,0.56,25.5
+brooks,39463,42461,5923,1392.9,0.0,25.9

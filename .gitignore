@@ -1,0 +1,38 @@
+# ---- Large data (keep out of git; regenerate or re-download) ----
+*.h5ad
+*.loom
+*.bam
+*.bai
+*.fastq
+*.fastq.gz
+*.mtx
+*.mtx.gz
+
+# Reference genomes / annotations and other downloaded external data
+data/external/
+
+# Velocyto intermediates (barcode TSVs etc.)
+data/velocyto/
+
+# ...but keep the small metadata tables
+!data/metadata/
+!data/metadata/*.csv
+
+# ---- Logs & cluster output ----
+logs/
+*.out
+*.err
+slurm-*.out
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.ipynb_checkpoints
+*.egg-info/
+.venv/
+venv/
+
+# ---- Editor / OS ----
+.DS_Store
+.vscode/
