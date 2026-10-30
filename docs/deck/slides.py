@@ -59,11 +59,15 @@ fig_slide(prs, "02_pca_hvg/filter_genes_dispersion_hvg.png",
 
 fig_slide(prs, "02_pca_hvg/pca_scree.png",
           "PCA variance is spread thin",
-          "No dominant component — PC1 carries a few percent, so 50 PCs feed the graph.",
-          note="This flatness is itself informative: the data is not dominated by "
-               "one axis such as cell cycle or stage. It also means the kNN graph "
-               "depends on many weak directions, which is part of why E7.0 "
-               "separates so completely.")
+          "PC1 carries 4.5%; 50 components computed, the first 30 feed the neighbour graph.",
+          note="sc.tl.pca(n_comps=50) then sc.pp.neighbors(n_neighbors=15, "
+               "n_pcs=30) - 50 computed, 30 used. Elbow at PC8-10 and flat past "
+               "PC15, so 30 is adequate-to-generous. Variance: PC1 4.5%, PC2 "
+               "3.3%, first 10 19.9%, first 30 28.3%, all 50 32.0%. The flatness "
+               "means the graph rests on many weak directions, which is part of "
+               "why E7.0 separates so completely. Note the CellRank notebook "
+               "rebuilds its graph as n_neighbors=30 over the full 50-component "
+               "Harmony representation, so the PC count differs there.")
 
 fig_slide(prs, "02_pca_hvg/pca_age_sample.png",
           "PCA by stage and by sample",
