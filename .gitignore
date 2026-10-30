@@ -36,3 +36,4 @@ venv/
 # ---- Editor / OS ----
 .DS_Store
 .vscode/
+figures/        # stray scvelo default figdir, not the project's output_fig/

@@ -1,0 +1,4 @@
+kernel,status,detail,initial,n_terminal
+joint_realtime,FAILED,ValueError: Discretizing leads to a cluster with `0` samples,,
+joint_rtk0.8_ck0.2,ok,,none,4.0
+joint_rtk0.5_ck0.5,ok,,none,4.0

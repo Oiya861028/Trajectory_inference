@@ -1,1 +1,11 @@
-""
+,realtime_moscot,connectivity,vk0.8_ck0.2,vk0.8_rtk0.2,vk0.5_rtk0.5,vk0.2_rtk0.8,vk0.6_rtk0.2_ck0.2
+0,True,True,True,True,True,True,True
+16,False,False,True,False,False,False,False
+19,False,True,False,False,False,False,False
+25,False,True,False,False,False,False,False
+26,False,False,False,False,False,False,True
+28,False,False,True,False,False,False,False
+3_1,False,False,True,True,True,True,True
+3_2,True,False,False,True,True,False,False
+5,True,True,False,False,False,True,False
+8,True,False,False,True,True,True,True

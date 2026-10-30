@@ -427,7 +427,15 @@ downgrade python.
 
 ### Local patches — **these do not survive an env rebuild**
 
-Both have `.orig` backups beside them.
+Each has a `.orig` backup beside it. All four are re-applied idempotently by
+
+```
+envs/cellrank_traj/bin/python scripts/patch_cellrank_env.py          # apply
+envs/cellrank_traj/bin/python scripts/patch_cellrank_env.py --check  # report only
+```
+
+`--check` exits non-zero if any is missing, and reports `STALE` rather than
+silently skipping if the upstream source has changed under the patch.
 
 1. `scvelo/tools/optimization.py` — `leastsq_generalized` assigns a size-1 array
    into a scalar slot, which numpy ≥2 rejects, breaking `mode="stochastic"`.
@@ -436,6 +444,20 @@ Both have `.orig` backups beside them.
 2. `cellrank/kernels/_velocity_kernel.py` — calls
    `np.testing.assert_array_equal(x=…, y=…)`; numpy 2 renamed those parameters to
    `actual`/`desired`. Fixed by passing positionally.
+3. `cellrank/_utils/_linear_solver.py:116` — `Mat.getVecs()`, which petsc4py
+   renamed to `createVecs` in 3.19 (this env has 3.26). Broke
+   `compute_fate_probabilities()`. Fixed by the rename; a pure API change, so
+   behaviour is unaffected.
+4. `pygpcca/utils/_utils.py` — the same rename, inside `_eigs_slepc`. The
+   handler around it caught only `ImportError`, so an `AttributeError` was not
+   routed to the scipy fallback; the stationary distribution then failed with
+   nothing but a `UserWarning`, and `predict_initial_states()` raised *No
+   coarse-grained stationary distribution found*. Fixed by widening to
+   `except (ImportError, AttributeError)`, which takes the ARPACK path. The
+   rename was tried here first and **made things worse** — it put SLEPc back in
+   the loop and the eigensolve did not converge, so the process hung. ARPACK is
+   adequate because only `k=2` eigenpairs are needed; SLEPc is still used for
+   the Schur decomposition, where it works and where the problem is large.
 
 A grep of the whole cellrank package found only four numpy-2-suspect sites; the
 other three are `.A1` calls guarded by `issparse`, safe as long as matrices stay
@@ -491,10 +513,21 @@ moscot: `TemporalProblem.prepare(time_key="stage_num", joint_attr=X_pca_harmony_
 then `solve(epsilon=1e-2, tau_a=0.95, tau_b=0.95, scale_cost="mean")`.
 `RealTimeKernel.from_moscot(...).compute_transition_matrix(self_transitions="all", conn_weight=0.2)`.
 
+**Terminal states are taken as `method="top_n", n_states=4`, not the default.**
+CellRank's default `method="stability"` keeps macrostates whose self-transition
+probability exceeds 0.96; on this data no macrostate cleared that bar, so the
+call raised and every one of the eight runs died (job `61837986`, see Status).
+`top_n` fixes the count instead of the threshold, which also makes the runs
+comparable — a threshold would let each weighting nominate a different number of
+states, confounding "which states" with "how many".
+
 Every run uses identical settings (`n_states=12`, `cluster_key="leiden_joint"`,
 Krylov Schur) so the comparison is like-for-like. Each reports macrostates,
 terminal states, **initial** states, and the stage each state falls in —
 root-cell identification being the motivation for the bridge in the first place.
+Composition is reported by `tissue` as well as by `age`, because dissection is
+confounded with stage (§10b): a macrostate that looks stage-specific may only be
+region-specific.
 Cross-run comparisons: fate-probability correlation matrix and terminal-state
 overlap table.
 
@@ -503,11 +536,39 @@ A moscot-only run on the full nine-stage joint object is in
 
 ### Status
 
-**Not yet complete.** Four failures so far, every one a version incompatibility
-rather than an analysis error (§12 patches and shims above). Job `61837986` is
-running at time of writing. The preprocessing chain, the numpy-2 stochastic
-patch, and `scv.tl.velocity_graph` are all confirmed working on the full 68k
-cells; the failures have been strictly downstream of those.
+**Validated on a subsample; the full run is in flight** (jobs `61851986`, then
+`61851987` for the moscot-only joint notebook via `--dependency=afterok`).
+
+Every failure so far has been a version incompatibility, not an analysis error.
+Job `61837986` lost all eight runs at once and left an empty
+`kernel_agreement.png` behind, because the loop caught each exception and
+printed only its message — so diagnosis cost an extra run. Two things changed as
+a result:
+
+- the loop now prints `traceback.print_exc()` and raises if *no* kernel
+  succeeded, rather than letting downstream cells render empty figures;
+- each run writes its own `fate_*.csv`, `composition_{stage,tissue}_*.csv` and
+  `macrostates_*.csv` as it finishes, so a late failure cannot discard earlier
+  results.
+
+Validation job `61851834` ran the whole chain on 6,000 cells (1,200 per stage,
+two kernels) and passed in 3 m 37 s, exercising specifically the calls the
+earlier smoke test had skipped:
+
+| call | before | after |
+|---|---|---|
+| `predict_terminal_states` | selected nothing, raised | `['18','0','8','28']` |
+| `predict_initial_states` | no stationary distribution | `['6']` |
+| `compute_fate_probabilities` | `AttributeError: getVecs` | row sums 1.0000 |
+| `plot_macrostates(basis=…)` | never reached | both bases OK |
+| `write_h5ad` | never reached | OK after Lineage→ndarray |
+
+`compute_fate_probabilities` puts CellRank `Lineage` objects in `obsm`, which
+anndata cannot serialise; they are cast to `ndarray` before writing, the column
+names being preserved in the `fate_*.csv` files. The scipy solver
+(`use_petsc=False`) was measured as a fallback and agrees to row sums of 0.9998,
+but PETSc is kept now that it works, since it parallelises over lineages and the
+full object is 11× larger than the validation subsample.
 
 ---
 
