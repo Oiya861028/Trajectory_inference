@@ -274,3 +274,85 @@ def banner(s, y=None, text="", color=CHERRY, h=None, tcolor=WHITE, size=13):
     textbox(s, 0.95, y + 0.13, inner, h - 0.2, text, size=size, bold=True,
             color=tcolor, space_after=0)
     return c
+
+
+# ---------------------------------------------------------------- figures
+import os
+from PIL import Image as _PILImage
+_PILImage.MAX_IMAGE_PIXELS = None
+
+FIGROOT = "/project/imoskowitz/yubin/Trajectory_inference/results/figures/"
+CAP_Y = 1.26          # the single line of description
+FIG_TOP = 1.72        # figures live below it
+FIG_BOTTOM = 6.95
+
+
+def fig_slide(prs, path, head, caption, dark=False, top=FIG_TOP,
+              bottom=FIG_BOTTOM, note=None, credit=None):
+    """One figure, a title and a single line. Scaled to fit, centred."""
+    s = blank(prs, dark=dark)
+    textbox(s, 0.7, TITLE_Y, W - 1.4, 0.62, head, size=26, font=HEAD, bold=True,
+            color=WHITE if dark else INK, space_after=0)
+    textbox(s, 0.7, CAP_Y, W - 1.4, 0.34, caption, size=13.5,
+            color=MIDGREY if dark else GREY, space_after=0)
+    place_fig(s, path, top, bottom)
+    if credit:
+        textbox(s, 0.7, bottom + 0.04, W - 1.4, 0.24, credit, size=9,
+                color=MIDGREY if dark else GREY, italic=True, space_after=0)
+    if note:
+        s.notes_slide.notes_text_frame.text = note
+    return s
+
+
+def place_fig(s, path, top=FIG_TOP, bottom=FIG_BOTTOM, left=0.7, right=None):
+    right = (W - 0.7) if right is None else right
+    full = path if os.path.isabs(path) else FIGROOT + path
+    iw, ih = _PILImage.open(full).size
+    bw, bh = right - left, bottom - top
+    scale = min(bw / iw, bh / ih)
+    w, h = iw * scale, ih * scale
+    s.shapes.add_picture(full, Inches(left + (bw - w) / 2),
+                         Inches(top + (bh - h) / 2), width=Inches(w))
+    return w, h
+
+
+def fig_row(prs, paths, head, caption, labels=None, dark=False, gap=0.18,
+            note=None):
+    """Several figures side by side, each scaled to the same height."""
+    s = blank(prs, dark=dark)
+    textbox(s, 0.7, TITLE_Y, W - 1.4, 0.62, head, size=26, font=HEAD, bold=True,
+            color=WHITE if dark else INK, space_after=0)
+    textbox(s, 0.7, CAP_Y, W - 1.4, 0.34, caption, size=13.5,
+            color=MIDGREY if dark else GREY, space_after=0)
+    lab_h = 0.3 if labels else 0.0
+    top, bottom = FIG_TOP + lab_h, FIG_BOTTOM
+    sizes = [_PILImage.open(FIGROOT + p).size for p in paths]
+    avail_w = (W - 1.4) - gap * (len(paths) - 1)
+    bh = bottom - top
+    # one shared height so the panels line up
+    h = min(bh, avail_w / sum(iw / ih for iw, ih in sizes))
+    widths = [h * iw / ih for iw, ih in sizes]
+    x = 0.7 + (avail_w - sum(widths)) / 2
+    for i, (p, wi) in enumerate(zip(paths, widths)):
+        if labels:
+            textbox(s, x, FIG_TOP, wi, 0.28, labels[i], size=12, bold=True,
+                    color=WHITE if dark else INK, align=PP_ALIGN.CENTER,
+                    space_after=0)
+        s.shapes.add_picture(FIGROOT + p, Inches(x), Inches(top),
+                             height=Inches(h))
+        x += wi + gap
+    if note:
+        s.notes_slide.notes_text_frame.text = note
+    return s
+
+
+def divider(prs, number, head, lines):
+    """Section divider: number, title, and what the section shows."""
+    s = blank(prs, dark=True)
+    textbox(s, 0.9, 2.15, 2.0, 1.4, number, size=78, font=HEAD, bold=True,
+            color=CHERRY, space_after=0)
+    textbox(s, 0.9, 3.52, 11.4, 1.2, head, size=30, font=HEAD, bold=True,
+            color=WHITE, space_after=0, line=1.12)
+    textbox(s, 0.9, 4.82, 10.4, 0.9, lines, size=15, color=SAND, line=1.3,
+            space_after=0)
+    return s
