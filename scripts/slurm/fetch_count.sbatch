@@ -22,8 +22,8 @@ PROJ=/project/imoskowitz/yubin/Trajectory_inference
 # Stage BAMs on the node-local SSD: per-job, auto-cleaned, and immune to the
 # shared /scratch quota. Override with BAM_DIR to keep them somewhere durable.
 SCRATCH=${BAM_DIR:-${SLURM_TMPDIR:-/tmp}}
-MANIFEST=$PROJ/data/metadata/samples_E7-E10.csv
-OUTDIR=$PROJ/data/h5ad
+MANIFEST=$PROJ/results/tables/metadata/samples_E7-E10.csv
+OUTDIR=$PROJ/data/raw/h5ad
 PYTHON=/home/yubin/.conda/envs/scRNAseq_python/bin/python
 export SAMTOOLS=/software/samtools-1.22.1-el8-x86_64/bin/samtools
 

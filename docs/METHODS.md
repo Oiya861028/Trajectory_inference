@@ -13,10 +13,10 @@ including the one that failed.
 
 ## 1. Input
 
-`data/devbrain_E7-E10.h5ad` — 68,177 cells × 24,191 genes, raw UMI counts,
+`data/interim/devbrain_E7-E10.h5ad` — 68,177 cells × 24,191 genes, raw UMI counts,
 19 libraries spanning E7.0, E8.0, E8.5, E9.0, E10.0.
 
-Produced by `scripts/fetch_count.sbatch` → `scripts/bam_to_h5ad.py` (stream
+Produced by `scripts/slurm/fetch_count.sbatch` → `scripts/bam_to_h5ad.py` (stream
 `CB`/`UB`/`GX` tags from the original CellRanger BAMs) → `scripts/combine_h5ad.py`
 (concatenate, call cells with the CellRanger v2 ordmag heuristic, floor 500 UMI).
 
@@ -29,7 +29,7 @@ Reference: `refdata-cellranger-mm10-3.0.0` (Ensembl 93). Chemistry is 10x **v1**
 ## 2. Gene-symbol repair
 
 **What.** Rebuild the Ensembl→symbol map from the union of all 19 per-sample
-files, cache to `data/metadata/gene_symbols.csv`, set `var_names` to symbols and
+files, cache to `results/tables/metadata/gene_symbols.csv`, set `var_names` to symbols and
 keep Ensembl IDs in `var["gene_ids"]`.
 
 **Why.** 5,334 of 24,191 symbols were `NaN`. `combine_h5ad.py` concatenates with
@@ -108,7 +108,7 @@ developmental timecourse. A no-batch-key comparison has not been run.
 
 **Plotting note.** `sc.pl.pca_variance_ratio(log=True)` plots the **natural** log
 of a fraction, so every point is negative; replaced with a linear-scale scree
-plot (`output_fig/02_pca_hvg/pca_scree.png`).
+plot (`results/figures/02_pca_hvg/pca_scree.png`).
 
 ---
 
@@ -192,8 +192,8 @@ assigns `GX` only to exonic reads: of 25,407 intronic (`RE:A:N`) reads probed,
 **zero** had a gene tag. Intronic counts require annotation-based interval
 assignment, which is velocyto's job.
 
-**Pipeline.** `scripts/export_barcodes.py` (per-library whitelists from the
-called cells) → `scripts/velocyto_run.sbatch`:
+**Pipeline.** `scripts/preprocess/export_barcodes.py` (per-library whitelists from the
+called cells) → `scripts/slurm/velocyto_run.sbatch`:
 
 ```
 velocyto run --bcfile <library>.tsv --sampleid <library> \
@@ -202,7 +202,7 @@ velocyto run --bcfile <library>.tsv --sampleid <library> \
              <bam> Mus_musculus.GRCm38.93.gtf
 ```
 
-References in `data/external/refs/`: Ensembl 93 GTF (all 24,191 of our gene IDs
+References in `data/raw/external/refs/`: Ensembl 93 GTF (all 24,191 of our gene IDs
 present — exact match to the CellRanger reference) and UCSC mm10 `rmsk`
 converted to Ensembl chromosome naming (`chr1`→`1`, `chrM`→`MT`, alt contigs
 dropped; 5,138,236 intervals).
@@ -223,7 +223,7 @@ peak RSS (19.8 GB), which retuned the array from a guessed 48 GB/16 h to
 | ours | 4,605,058 | 1,086,684 | **19.1%** |
 | published | 4,614,149 | 1,104,588 | **19.3%** |
 
-Output: `data/velocyto/loom/`, 19 files, 68,177 cells — exactly the input cell
+Output: `data/interim/velocyto/loom/`, 19 files, 68,177 cells — exactly the input cell
 count. Note the *global* unspliced fraction is 5.2%; the published 3,686-gene
 subset is intron-rich by construction, which is why it reads higher. Ribosomal
 genes illustrate the dilution: `Rps2` has 347,315 spliced against 562 unspliced.
@@ -282,7 +282,7 @@ And the headline result — e7.0 reaches forward without long-range fabrication:
 consecutive stage pair sharing 5–35% of neighbours. Contrast §7, where
 e7.0→e10.0 went to 6.22%.
 
-Output: `data/devbrain_brooks_integrated.h5ad` (107,629 × 15,200).
+Output: `data/processed/devbrain_brooks_integrated.h5ad` (107,629 × 15,200).
 
 **Caveats.** Only 1,618 of the 3,000 HVGs are variable in both datasets. The
 E7.0↔E7.5 link (8.75%) is the thinnest in the chain and is the bottleneck for
@@ -292,7 +292,7 @@ any trajectory through gastrulation.
 
 ## 10. How different are the two datasets?
 
-`scripts/compare_datasets.py` (streams both matrices in cell blocks).
+`scripts/analysis/compare_datasets.py` (streams both matrices in cell blocks).
 
 | | devbrain | Brooks |
 |---|---|---|
@@ -308,7 +308,7 @@ genes should be excluded from joint HVG selection.
 
 ### Interpreting pseudobulk correlation
 
-`scripts/pseudobulk_correlation_context.py` establishes the scale, because raw
+`scripts/analysis/pseudobulk_correlation_context.py` establishes the scale, because raw
 Pearson values here are misleading. Splitting each stage into two random halves
 (differing only by sampling noise) gives the ceiling:
 
@@ -342,7 +342,7 @@ falsification test was non-negotiable.
 
 ## 10b. Dissection is confounded with stage
 
-Per-library pseudobulk correlation (`data/metadata/devbrain_library_correlation.csv`,
+Per-library pseudobulk correlation (`results/tables/metadata/devbrain_library_correlation.csv`,
 171 pairs, expressed genes) separates stage from dissected region:
 
 | | n pairs | median r |
@@ -390,7 +390,7 @@ same-chip vs 0.9832 different-chip), but on only 4 same-chip pairs.
 
 ## 11. Velocity object
 
-`scripts/merge_velocyto.py` → `data/devbrain_velocity.h5ad` (68,166 × 21,743).
+`scripts/preprocess/merge_velocyto.py` → `data/interim/devbrain_velocity.h5ad` (68,166 × 21,743).
 
 Joins: loom `<library>:<barcode>x` → devbrain `<sample>:<barcode>-1`; loom row
 `Accession` → `var["gene_ids"]`. Looms store layers as dense gene × cell arrays,
@@ -430,8 +430,8 @@ downgrade python.
 Each has a `.orig` backup beside it. All four are re-applied idempotently by
 
 ```
-envs/cellrank_traj/bin/python scripts/patch_cellrank_env.py          # apply
-envs/cellrank_traj/bin/python scripts/patch_cellrank_env.py --check  # report only
+envs/cellrank_traj/bin/python scripts/env/patch_cellrank_env.py          # apply
+envs/cellrank_traj/bin/python scripts/env/patch_cellrank_env.py --check  # report only
 ```
 
 `--check` exits non-zero if any is missing, and reports `STALE` rather than
@@ -532,7 +532,7 @@ Cross-run comparisons: fate-probability correlation matrix and terminal-state
 overlap table.
 
 A moscot-only run on the full nine-stage joint object is in
-`Notebooks/cellrank_joint_moscot.ipynb`; velocity cannot participate there.
+`notebooks/cellrank_joint_moscot.ipynb`; velocity cannot participate there.
 
 ### Status
 
@@ -575,7 +575,7 @@ full object is 11× larger than the validation subsample.
 ## Figure layout
 
 ```
-output_fig/
+results/figures/
 ├── 01_qc/                  QC violins, UMAP by QC metric
 ├── 02_pca_hvg/             HVG dispersion, scree, PCA scatter
 ├── 03_umap_unintegrated/   leiden, age/tissue/sample, per-age + per-tissue facets

@@ -17,10 +17,10 @@ import numpy as np
 import pandas as pd
 
 BASE = "/project/imoskowitz/yubin/Trajectory_inference/"
-DEV = BASE + "data/devbrain_E7-E10_processed.h5ad"
+DEV = BASE + "data/interim/devbrain_E7-E10_processed.h5ad"
 BROOKS = ("/project/imoskowitz/kdreyer/public_datasets/"
           "001_Brooks2025_GSE273804/WT_timeseries/GSE273804_FVB_All.h5ad")
-OUT = BASE + "data/metadata/"
+OUT = BASE + "results/tables/metadata/"
 BLOCK = 4000
 rng = np.random.default_rng(0)
 

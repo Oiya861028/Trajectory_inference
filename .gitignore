@@ -7,16 +7,17 @@
 *.fastq.gz
 *.mtx
 *.mtx.gz
+*.pkl
 
 # Reference genomes / annotations and other downloaded external data
-data/external/
+data/raw/external/
 
 # Velocyto intermediates (barcode TSVs etc.)
-data/velocyto/
+data/interim/velocyto/
 
-# ...but keep the small metadata tables
-!data/metadata/
-!data/metadata/*.csv
+# ...but keep the small result tables
+!results/tables/
+!results/tables/**/*.csv
 
 # ---- Logs & cluster output ----
 logs/
@@ -36,4 +37,8 @@ venv/
 # ---- Editor / OS ----
 .DS_Store
 .vscode/
-figures/        # stray scvelo default figdir, not the project's output_fig/
+
+# scvelo's default figdir, if a notebook ever forgets to set scv.settings.figdir.
+# Anchored with a leading slash: an unanchored "figures/" would also match
+# results/figures/, silently un-tracking every figure in the project.
+/figures/

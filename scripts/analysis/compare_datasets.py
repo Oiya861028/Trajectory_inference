@@ -22,10 +22,10 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 BASE = "/project/imoskowitz/yubin/Trajectory_inference/"
-DEV = BASE + "data/devbrain_E7-E10_processed.h5ad"
+DEV = BASE + "data/interim/devbrain_E7-E10_processed.h5ad"
 BROOKS = ("/project/imoskowitz/kdreyer/public_datasets/"
           "001_Brooks2025_GSE273804/WT_timeseries/GSE273804_FVB_All.h5ad")
-OUT = BASE + "output_fig/06_integration_brooks/"
+OUT = BASE + "results/figures/06_integration_brooks/"
 os.makedirs(OUT, exist_ok=True)
 BLOCK = 4000
 
@@ -247,7 +247,7 @@ fig.tight_layout()
 fig.savefig(OUT + "dataset_comparison.png", dpi=200, bbox_inches="tight")
 print(f"\nwrote {OUT}dataset_comparison.png")
 
-summary.to_csv(BASE + "data/metadata/dataset_comparison_summary.csv")
-per_stage.to_csv(BASE + "data/metadata/dataset_comparison_by_stage.csv", index=False)
-corr.to_csv(BASE + "data/metadata/dataset_pseudobulk_correlation.csv")
-print("wrote comparison tables to data/metadata/")
+summary.to_csv(BASE + "results/tables/metadata/dataset_comparison_summary.csv")
+per_stage.to_csv(BASE + "results/tables/metadata/dataset_comparison_by_stage.csv", index=False)
+corr.to_csv(BASE + "results/tables/metadata/dataset_pseudobulk_correlation.csv")
+print("wrote comparison tables to results/tables/metadata/")

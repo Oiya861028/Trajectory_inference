@@ -17,7 +17,7 @@
 set -euo pipefail
 PROJ=/project/imoskowitz/yubin/Trajectory_inference
 PYBIN=/project/imoskowitz/yubin/envs/cellrank_traj/bin
-NB=${1:-Notebooks/cellrank_trajectory.ipynb}
+NB=${1:-notebooks/cellrank_trajectory.ipynb}
 
 export OMP_NUM_THREADS=${SLURM_CPUS_PER_TASK:-16}
 export OPENBLAS_NUM_THREADS=$OMP_NUM_THREADS

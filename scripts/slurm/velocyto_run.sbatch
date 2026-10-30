@@ -28,10 +28,10 @@
 set -euo pipefail
 
 PROJ=/project/imoskowitz/yubin/Trajectory_inference
-MANIFEST=$PROJ/data/metadata/samples_E7-E10.csv
-BCDIR=$PROJ/data/velocyto/barcodes
-OUTDIR=$PROJ/data/velocyto/loom
-REFS=$PROJ/data/external/refs
+MANIFEST=$PROJ/results/tables/metadata/samples_E7-E10.csv
+BCDIR=$PROJ/data/interim/velocyto/barcodes
+OUTDIR=$PROJ/data/interim/velocyto/loom
+REFS=$PROJ/data/raw/external/refs
 GTF=$REFS/Mus_musculus.GRCm38.93.gtf
 RMSK=$REFS/mm10_rmsk.ensembl.gtf
 VELOCYTO=/project/imoskowitz/yubin/envs/velocyto/bin/velocyto

@@ -24,5 +24,5 @@ cd "$PROJ"
 "$PYBIN/jupyter" nbconvert --to notebook --execute --inplace \
     --ExecutePreprocessor.timeout=18000 \
     --ExecutePreprocessor.kernel_name=python3 \
-    Notebooks/integration_devbrain_brooks.ipynb
+    notebooks/integration_devbrain_brooks.ipynb
 echo "done: $(date)"

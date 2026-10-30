@@ -19,10 +19,10 @@ Two models, because one stage range cannot answer both questions:
      is applied to devbrain E8.0 onward.
 
 Outputs
-  data/celltypist/models/*.pkl
-  data/devbrain_celltypist.h5ad        all cells + predictions from both models
-  data/devbrain_neural_lineage.h5ad    the isolated neural/brain subset
-  data/metadata/celltypist_*.csv       composition tables
+  results/models/celltypist/*.pkl
+  data/processed/devbrain_celltypist.h5ad        all cells + predictions from both models
+  data/processed/devbrain_neural_lineage.h5ad    the isolated neural/brain subset
+  results/tables/metadata/celltypist_*.csv       composition tables
 """
 
 import os
@@ -38,9 +38,9 @@ from celltypist import models as ct_models
 BASE = "/project/imoskowitz/yubin/Trajectory_inference/"
 PIJUAN = ("/project/imoskowitz/kdreyer/public_datasets/002_PijuanSala2019/"
           "gastrulation_ps2019.h5ad")
-DEVBRAIN = BASE + "data/devbrain_E7-E10_processed.h5ad"
-MODEL_DIR = BASE + "data/celltypist/models/"
-META = BASE + "data/metadata/"
+DEVBRAIN = BASE + "data/interim/devbrain_E7-E10_processed.h5ad"
+MODEL_DIR = BASE + "results/models/celltypist/"
+META = BASE + "results/tables/metadata/"
 N_JOBS = int(os.environ.get("SLURM_CPUS_PER_TASK", 8))
 MIN_CELLS_PER_LABEL = 20
 
@@ -212,12 +212,12 @@ def main():
     print("\n=== mean confidence by model ===")
     print(dev.obs[["ct_gastrulation_conf", "ct_extended_conf"]].describe().round(3).to_string())
 
-    dev.write_h5ad(BASE + "data/devbrain_celltypist.h5ad", compression="gzip")
-    print(f"\nwrote data/devbrain_celltypist.h5ad: {dev.shape}")
+    dev.write_h5ad(BASE + "data/processed/devbrain_celltypist.h5ad", compression="gzip")
+    print(f"\nwrote data/processed/devbrain_celltypist.h5ad: {dev.shape}")
 
     neural = dev[dev.obs["is_neural"]].copy()
-    neural.write_h5ad(BASE + "data/devbrain_neural_lineage.h5ad", compression="gzip")
-    print(f"wrote data/devbrain_neural_lineage.h5ad: {neural.shape} "
+    neural.write_h5ad(BASE + "data/processed/devbrain_neural_lineage.h5ad", compression="gzip")
+    print(f"wrote data/processed/devbrain_neural_lineage.h5ad: {neural.shape} "
           f"({100*neural.n_obs/dev.n_obs:.1f}% of cells)")
     print(neural.obs["age"].value_counts().sort_index().to_string())
 

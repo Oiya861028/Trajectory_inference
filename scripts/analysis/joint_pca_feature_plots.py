@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 """PCA and feature plots for the joint devbrain + Brooks object.
 
-Mirrors what Notebooks/inference.ipynb produces for devbrain alone, so the two
+Mirrors what notebooks/inference.ipynb produces for devbrain alone, so the two
 can be read side by side: PCA variance ratio, PC scatters before and after
 Harmony, stage/dataset facets, and hedgehog-pathway feature plots with the
 same grey-background / brightest-last contrast treatment.
 
-Output: output_fig/09_joint_pca_features/
+Output: results/figures/09_joint_pca_features/
 """
 
 import os
@@ -20,7 +20,7 @@ import scanpy as sc
 from matplotlib.colors import LinearSegmentedColormap
 
 BASE = "/project/imoskowitz/yubin/Trajectory_inference/"
-OUT = BASE + "output_fig/09_joint_pca_features/"
+OUT = BASE + "results/figures/09_joint_pca_features/"
 os.makedirs(OUT, exist_ok=True)
 sc.settings.verbosity = 2
 sc.settings.set_figure_params(dpi=100, dpi_save=200, frameon=False, figsize=(5, 5))
@@ -82,7 +82,7 @@ def cat_scatter(adata, key, ax, basis, order=None, size=1.2, legend=True):
 
 def main():
     print("loading joint object ...", flush=True)
-    a = ad.read_h5ad(BASE + "data/devbrain_brooks_integrated.h5ad")
+    a = ad.read_h5ad(BASE + "data/processed/devbrain_brooks_integrated.h5ad")
     print(a.shape, flush=True)
     a.obs["stage"] = a.obs["stage"].astype(str)
 

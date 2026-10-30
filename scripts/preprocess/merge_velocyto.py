@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """Merge the 19 velocyto looms onto the devbrain cells of the joint object.
 
-Output: data/devbrain_velocity.h5ad -- devbrain cells only (Brooks has no
+Output: data/interim/devbrain_velocity.h5ad -- devbrain cells only (Brooks has no
 spliced/unspliced), but carrying the *joint* Harmony embedding so the graph
 still benefits from the Brooks bridge when picking a root cell.
 
@@ -23,11 +23,11 @@ import pandas as pd
 from scipy.sparse import csr_matrix, lil_matrix, vstack
 
 BASE = "/project/imoskowitz/yubin/Trajectory_inference/"
-PROCESSED = BASE + "data/devbrain_E7-E10_processed.h5ad"
-INTEGRATED = BASE + "data/devbrain_brooks_integrated.h5ad"
-LOOMS = sorted(glob.glob(BASE + "data/velocyto/loom/*.loom"))
-MANIFEST = BASE + "data/metadata/samples_E7-E10.csv"
-OUT = BASE + "data/devbrain_velocity.h5ad"
+PROCESSED = BASE + "data/interim/devbrain_E7-E10_processed.h5ad"
+INTEGRATED = BASE + "data/processed/devbrain_brooks_integrated.h5ad"
+LOOMS = sorted(glob.glob(BASE + "data/interim/velocyto/loom/*.loom"))
+MANIFEST = BASE + "results/tables/metadata/samples_E7-E10.csv"
+OUT = BASE + "data/interim/devbrain_velocity.h5ad"
 GENE_BLOCK = 6000
 LAYERS = ("spliced", "unspliced", "ambiguous")
 

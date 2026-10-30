@@ -8,8 +8,8 @@ ordmag heuristic: threshold = (99th percentile of the top `expected_cells`
 barcode counts) / 10.
 
 Writes:
-  data/devbrain_E7-E10.h5ad      cells only, concatenated
-  data/devbrain_E7-E10_raw.h5ad  all barcodes >= --raw-min-umi (with --write-raw)
+  data/interim/devbrain_E7-E10.h5ad      cells only, concatenated
+  data/interim/devbrain_E7-E10_raw.h5ad  all barcodes >= --raw-min-umi (with --write-raw)
 """
 
 import argparse

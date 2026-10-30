@@ -8,7 +8,7 @@
 #SBATCH --mem=64G
 #SBATCH --time=04:00:00
 
-# Execute Notebooks/inference.ipynb in place on a compute node.  The login nodes
+# Execute notebooks/inference.ipynb in place on a compute node.  The login nodes
 # cap each user at 8 GB, which is not enough for 68k x 24k: normalization alone
 # holds the counts layer plus a float32 copy of a 216M-nnz matrix.
 
@@ -27,6 +27,6 @@ cd "$PROJ"
     --to notebook --execute --inplace \
     --ExecutePreprocessor.timeout=10800 \
     --ExecutePreprocessor.kernel_name=python3 \
-    Notebooks/inference.ipynb
+    notebooks/inference.ipynb
 
 echo "done: $(date)"
