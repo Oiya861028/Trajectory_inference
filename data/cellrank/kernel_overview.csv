@@ -1,0 +1,9 @@
+kernel,status,n_terminal,initial_state,initial_stage
+velocity,FAILED,,AttributeError: 'petsc4py.PETSc.Mat' obj,
+realtime_moscot,FAILED,,AttributeError: 'petsc4py.PETSc.Mat' obj,
+connectivity,FAILED,,AttributeError: 'petsc4py.PETSc.Mat' obj,
+vk0.8_ck0.2,FAILED,,AttributeError: 'petsc4py.PETSc.Mat' obj,
+vk0.8_rtk0.2,FAILED,,AttributeError: 'petsc4py.PETSc.Mat' obj,
+vk0.5_rtk0.5,FAILED,,AttributeError: 'petsc4py.PETSc.Mat' obj,
+vk0.2_rtk0.8,FAILED,,AttributeError: 'petsc4py.PETSc.Mat' obj,
+vk0.6_rtk0.2_ck0.2,FAILED,,AttributeError: 'petsc4py.PETSc.Mat' obj,

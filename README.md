@@ -32,6 +32,14 @@ logs/         SLURM stdout/stderr (not tracked)
    `Notebooks/integration_devbrain_brooks.ipynb`; see also
    `scripts/compare_datasets.py` for the streaming dataset comparison.
 
+## Methods
+
+`METHODS.md` documents each step with its parameters and the reasoning behind it,
+including the validation tests for the batch-correction and integration steps
+(one of which failed — Harmony on `chip` — and why it was rejected), and the two
+local site-packages patches in `envs/cellrank_traj` that do **not** survive an
+env rebuild.
+
 ## Data
 
 The `.h5ad`/`.loom` matrices and reference annotations are deliberately not in
