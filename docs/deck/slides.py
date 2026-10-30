@@ -57,7 +57,7 @@ fig_slide(prs, "02_pca_hvg/filter_genes_dispersion_hvg.png",
           "Highly variable gene selection",
           "2,000 genes per batch; hedgehog genes retained explicitly, being too sparse to survive.")
 
-fig_slide(prs, "02_pca_hvg/pca_scree.png",
+fig_slide(prs, "02_pca_hvg/pca_variance.png",
           "PCA variance is spread thin",
           "PC1 carries 4.5%; 50 components computed, the first 30 feed the neighbour graph.",
           note="sc.tl.pca(n_comps=50) then sc.pp.neighbors(n_neighbors=15, "
@@ -69,9 +69,10 @@ fig_slide(prs, "02_pca_hvg/pca_scree.png",
                "rebuilds its graph as n_neighbors=30 over the full 50-component "
                "Harmony representation, so the PC count differs there.")
 
-fig_slide(prs, "02_pca_hvg/pca_age_sample.png",
-          "PCA by stage and by sample",
-          "Stage separates on the leading components; E7.0 sits apart already in PCA space.")
+fig_slide(prs, "02_pca_hvg/pca_scatter_age.png",
+          "PCA by stage",
+          "E7.0 sits apart already in PCA space, before any graph is built.",
+          note="Harmony-on-chip is shown as the second row for comparison only; it was rejected. The same figure exists for tissue and sample.")
 
 fig_slide(prs, "03_umap_unintegrated/umap_age_tissue_sample.png",
           "Unintegrated UMAP",
@@ -149,9 +150,9 @@ fig_slide(prs, "06_integration_brooks/umap_facet_stage.png",
           "Joint object, one panel per stage",
           "Brooks supplies E7.5 to E8.75 — exactly the window the La Manno series skips.")
 
-fig_slide(prs, "09_joint_pca_features/pca_variance_ratio.png",
+fig_slide(prs, "09_joint_pca_features/pca_variance.png",
           "Joint PCA variance",
-          "PC1 explains 3.6%, the top 50 only 29.7% — two platforms spread the variance thinner.")
+          "Same axes as slide 6: PC1 3.6% here versus 4.5% alone — two platforms spread it thinner.")
 
 fig_slide(prs, "09_joint_pca_features/pca_scatter_dataset.png",
           "Joint PCA, uncorrected versus Harmony",

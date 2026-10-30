@@ -16,5 +16,5 @@ cd /project/imoskowitz/yubin/Trajectory_inference
 export OMP_NUM_THREADS=${SLURM_CPUS_PER_TASK:-16}
 export OPENBLAS_NUM_THREADS=$OMP_NUM_THREADS
 export MKL_NUM_THREADS=$OMP_NUM_THREADS
-/home/yubin/.conda/envs/scRNAseq_python/bin/python -u scripts/celltypist_gastrulation.py
+/home/yubin/.conda/envs/scRNAseq_python/bin/python -u scripts/analysis/celltypist_gastrulation.py
 echo "done: $(date)"

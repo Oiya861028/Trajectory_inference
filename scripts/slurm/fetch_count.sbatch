@@ -69,7 +69,7 @@ echo "downloaded $actual_size bytes, verifying BGZF integrity"
 "$SAMTOOLS" quickcheck -v "$BAM"
 
 # --- count ----------------------------------------------------------------
-"$PYTHON" -u "$PROJ/scripts/bam_to_h5ad.py" \
+"$PYTHON" -u "$PROJ/scripts/preprocess/bam_to_h5ad.py" \
     --bam "$BAM" \
     --out "$OUT" \
     --sample "$SAMPLE" \

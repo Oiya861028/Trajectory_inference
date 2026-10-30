@@ -10,5 +10,5 @@
 set -euo pipefail
 cd /project/imoskowitz/yubin/Trajectory_inference
 export OMP_NUM_THREADS=${SLURM_CPUS_PER_TASK:-4}
-/project/imoskowitz/yubin/envs/cellrank_traj/bin/python -u scripts/joint_pca_feature_plots.py
+/project/imoskowitz/yubin/envs/cellrank_traj/bin/python -u scripts/analysis/joint_umap_feature_plots.py
 echo "done: $(date)"

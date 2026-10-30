@@ -86,44 +86,7 @@ def main():
     print(a.shape, flush=True)
     a.obs["stage"] = a.obs["stage"].astype(str)
 
-    # ---- 1. PCA variance ratio ------------------------------------------
-    vr = a.uns["pca"]["variance_ratio"]
-    fig, axes = plt.subplots(1, 2, figsize=(11, 4))
-    axes[0].bar(np.arange(1, len(vr) + 1), vr * 100, color="#4878A6")
-    axes[0].set_xlabel("principal component"); axes[0].set_ylabel("variance explained (%)")
-    axes[0].set_title(f"Joint PCA: PC1 explains {vr[0]*100:.1f}%, "
-                      f"top 50 explain {vr.sum()*100:.1f}%", fontsize=10)
-    axes[1].plot(np.arange(1, len(vr) + 1), np.cumsum(vr) * 100, "o-", ms=3, color="#4878A6")
-    axes[1].set_xlabel("principal component"); axes[1].set_ylabel("cumulative (%)")
-    axes[1].set_title("Cumulative variance explained", fontsize=10)
-    for ax in axes:
-        ax.spines[["top", "right"]].set_visible(False)
-    fig.tight_layout(); fig.savefig(OUT + "pca_variance_ratio.png", dpi=200, bbox_inches="tight")
-    plt.close(fig)
-    print(f"PC1 {vr[0]*100:.2f}%  PC1-10 {vr[:10].sum()*100:.1f}%  "
-          f"PC1-50 {vr.sum()*100:.1f}%", flush=True)
-
-    # ---- 2. PC scatters, uncorrected vs Harmony -------------------------
-    # the point of the pair: if a PC separates the two datasets before Harmony
-    # and not after, that PC was carrying batch rather than biology
-    for key, order, fname in (("dataset", ["devbrain", "brooks"], "dataset"),
-                              ("stage", STAGE_ORDER, "stage")):
-        fig, axes = plt.subplots(2, 2, figsize=(13, 10))
-        for row, (rep, label) in enumerate(((("X_pca"), "uncorrected"),
-                                            (("X_pca_harmony"), "Harmony"))):
-            for col, (i, j) in enumerate(((0, 1), (1, 2))):
-                ax = axes[row, col]
-                sub = ad.AnnData(obs=a.obs, obsm={"p": a.obsm[rep][:, [i, j]]})
-                cat_scatter(sub, key, ax, "p", order=order,
-                            legend=(col == 1))
-                ax.set_title(f"{label}  PC{i+1} vs PC{j+1}", fontsize=10)
-        fig.suptitle(f"Joint PCA coloured by {key}", fontsize=12)
-        fig.tight_layout()
-        fig.savefig(OUT + f"pca_scatter_{fname}.png", dpi=200, bbox_inches="tight")
-        plt.close(fig)
-        print(f"wrote pca_scatter_{fname}.png", flush=True)
-
-    # ---- 3. UMAP, pre vs post Harmony -----------------------------------
+    # ---- 1. UMAP, pre vs post Harmony -----------------------------------
     fig, axes = plt.subplots(2, 2, figsize=(13, 10))
     for row, (basis, label) in enumerate((("X_umap_pre", "before Harmony"),
                                           ("X_umap_post", "after Harmony"))):
@@ -135,7 +98,7 @@ def main():
     plt.close(fig)
     print("wrote umap_pre_post_harmony.png", flush=True)
 
-    # ---- 4. stage facets ------------------------------------------------
+    # ---- 2. stage facets ------------------------------------------------
     # one panel per stage: overlapping stages in a single UMAP are unreadable
     stages = [s for s in STAGE_ORDER if s in set(a.obs["stage"])]
     ncol = 5; nrow = int(np.ceil(len(stages) / ncol))
@@ -161,7 +124,7 @@ def main():
     plt.close(fig)
     print("wrote umap_facet_stage.png", flush=True)
 
-    # ---- 5. feature plots -----------------------------------------------
+    # ---- 3. feature plots -----------------------------------------------
     for panel, genes in (("hedgehog", HH), ("regional", REGIONAL)):
         genes = [g for g in genes if g in a.var_names]
         for basis, tag in (("X_umap_post", "umap"), ("X_pca_harmony", "pca")):

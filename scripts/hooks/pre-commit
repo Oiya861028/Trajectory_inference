@@ -1,0 +1,21 @@
+#!/bin/bash
+# Refuse a commit that leaves a path reference broken.
+#
+# The reorganization into data/{raw,interim,processed} rewrote 105 path
+# references and still left four sbatch wrappers pointing at scripts that had
+# moved. Nothing noticed until a job failed on a compute node several minutes
+# into its allocation. This hook runs the same check up front.
+#
+# Install:  bash scripts/hooks/install.sh
+# Bypass once (and say why in the commit message):  git commit --no-verify
+set -u
+PROJ="$(git rev-parse --show-toplevel)"
+PY=/project/imoskowitz/yubin/envs/cellrank_traj/bin/python
+[ -x "$PY" ] || PY=python3
+
+if ! "$PY" "$PROJ/scripts/check_references.py"; then
+    echo
+    echo "pre-commit: broken path references (above). Fix them, or commit with"
+    echo "            --no-verify if the breakage is intentional and explained."
+    exit 1
+fi
